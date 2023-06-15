@@ -10,7 +10,12 @@ var path=Directory.GetCurrentDirectory();
 //get access to connection string object through confirguration settings
 IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 //DI passes the connstring to the context object with correct output directory path
-builder.Services.AddDbContext<HogwartsContext>(option => option.UseSqlServer(configuration.GetConnectionString("HogwartsConnString").Replace("|DataDirectory|",path)));
+builder.Services.AddDbContext<HogwartsContext>(option => option.UseSqlServer(configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING").Replace("|DataDirectory|",path)));
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+options.Configuration = builder.Configuration["AZURE_REDIS_CONNECTIONSTRING"];
+options.InstanceName = "SampleInstance";
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
